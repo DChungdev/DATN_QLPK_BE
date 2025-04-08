@@ -55,7 +55,7 @@ public class AuthController {
                 request.getPhone(),
                 request.getRole()
             );
-            if(request.getRole().equalsIgnoreCase("doctor")) {
+            if(request.getRole() != null && request.getRole().equalsIgnoreCase("doctor")) {
                 Doctor doctor = new Doctor();
                 doctor.setAccount(account);
                 doctor.setFullName(request.getFullName());

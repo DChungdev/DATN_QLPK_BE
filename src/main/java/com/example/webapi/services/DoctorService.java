@@ -1,5 +1,6 @@
 package com.example.webapi.services;
 
+import com.example.webapi.models.entities.Department;
 import com.example.webapi.models.entities.Doctor;
 import com.example.webapi.models.entities.Patient;
 import com.example.webapi.repositories.DoctorRepository;
@@ -27,6 +28,10 @@ public class DoctorService {
         return doctorRepository.findByUsername(username).orElse(null);
     }
 
+    public List<Doctor> getDoctorsByDepartmentId(Long id) {
+        return doctorRepository.findByDepartmentId(id);
+    }
+
     public Doctor createDoctor(Doctor doctor) {
         Doctor savedDoctor = doctorRepository.save(doctor);
         return savedDoctor;
@@ -39,6 +44,8 @@ public class DoctorService {
         existingDoctor.setPhone(doctor.getPhone());
         existingDoctor.setGender(doctor.getGender());
         existingDoctor.setDateOfBirth(doctor.getDateOfBirth());
+        existingDoctor.setDegree(doctor.getDegree());
+        existingDoctor.setDepartment(doctor.getDepartment());
 
         return doctorRepository.save(existingDoctor);
     }

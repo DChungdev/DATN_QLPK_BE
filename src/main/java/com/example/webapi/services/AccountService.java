@@ -41,7 +41,7 @@ public class AccountService {
         account.setFullName(fullName);
         account.setEmail(email);
         account.setPhone(phone);
-        account.setRole(role != null ? role : "USER"); // Default role is USER if not specified
+        account.setRole(role != null ? role.toLowerCase() : "user"); // Default role is USER if not specified
 
         return accountRepository.save(account);
     }

@@ -31,11 +31,11 @@ public class Doctor {
     private String gender;
     private String phone;
     private String address;
-
+    private String degree;
     // Liên kết đến khoa
     @ManyToOne
-    @JoinColumn(name = "department_id")
-    @JsonIgnore
+    @JoinColumn(name = "department_id", nullable = true)
+//    @JsonIgnore
     private Department department;
 
     @Column(name = "created_at")

@@ -1,7 +1,10 @@
 package com.example.webapi.controllers;
 
+import com.example.webapi.models.dto.DoctorModel;
+import com.example.webapi.models.entities.Department;
 import com.example.webapi.models.entities.Doctor;
 import com.example.webapi.repositories.DoctorRepository;
+import com.example.webapi.services.DepartmentService;
 import com.example.webapi.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +18,39 @@ import java.util.List;
 public class DoctorController {
     @Autowired
     DoctorService doctorService;
+    @Autowired
+    DepartmentService departmentService;
 
     @PreAuthorize("hasRole('ROLE_admin')")
     @GetMapping
-    public List<Doctor> getDoctors() {
-        return doctorService.findAll();
+    public List<DoctorModel> getDoctors() {
+        return doctorService.findAll().stream().<DoctorModel>map(doctor -> DoctorModel.builder()
+                .doctorId(doctor.getDoctorId())
+                .fullName(doctor.getFullName())
+                .dateOfBirth(doctor.getDateOfBirth())
+                .gender(doctor.getGender())
+                .phone(doctor.getPhone())
+                .address(doctor.getAddress())
+                .degree(doctor.getDegree())
+                .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+                .build()).toList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getDoctor(@PathVariable Long id) {
         try{
             Doctor doctor = doctorService.findById(id);
-            return ResponseEntity.ok(doctor);
+            DoctorModel doctorModel = DoctorModel.builder()
+                    .doctorId(doctor.getDoctorId())
+                    .fullName(doctor.getFullName())
+                    .dateOfBirth(doctor.getDateOfBirth())
+                    .gender(doctor.getGender())
+                    .phone(doctor.getPhone())
+                    .address(doctor.getAddress())
+                    .degree(doctor.getDegree())
+                    .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+                    .build();
+            return ResponseEntity.ok(doctorModel);
         }
         catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -38,7 +62,17 @@ public class DoctorController {
         try{
             Doctor doctor = doctorService.getDoctorByUsername(username);
             if(doctor != null) {
-                return ResponseEntity.ok(doctor);
+                DoctorModel doctorModel = DoctorModel.builder()
+                    .doctorId(doctor.getDoctorId())
+                    .fullName(doctor.getFullName())
+                    .dateOfBirth(doctor.getDateOfBirth())
+                    .gender(doctor.getGender())
+                    .phone(doctor.getPhone())
+                    .address(doctor.getAddress())
+                    .degree(doctor.getDegree())
+                    .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+                    .build();
+                return ResponseEntity.ok(doctorModel);
             }
             else return ResponseEntity.notFound().build();
         }
@@ -47,10 +81,42 @@ public class DoctorController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity createDoctor(@RequestBody Doctor doctor) {
+    @GetMapping("/findbyDepartmentId/{id}")
+    public ResponseEntity getDoctorsByDepartmentId(@PathVariable Long id) {
         try{
-            Doctor doctor1 = doctorService.createDoctor(doctor);
+            List<DoctorModel> doctors = doctorService.getDoctorsByDepartmentId(id).stream().<DoctorModel>map(doctor -> DoctorModel.builder()
+            .doctorId(doctor.getDoctorId())
+            .fullName(doctor.getFullName())
+            .dateOfBirth(doctor.getDateOfBirth())
+            .gender(doctor.getGender())
+            .phone(doctor.getPhone())
+            .address(doctor.getAddress())
+            .degree(doctor.getDegree())
+            .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+            .build()).toList();
+
+            return ResponseEntity.ok(doctors);
+        }
+        catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity createDoctor(@RequestBody DoctorModel doctor) {
+        try{
+            Doctor newDoctor = new Doctor();
+            newDoctor.setFullName(doctor.getFullName());
+            newDoctor.setDateOfBirth(doctor.getDateOfBirth());
+            newDoctor.setGender(doctor.getGender());
+            newDoctor.setPhone(doctor.getPhone());
+            newDoctor.setAddress(doctor.getAddress());
+            newDoctor.setDegree(doctor.getDegree());
+            if(doctor.getDepartmentId() != null) {
+                Department department = departmentService.findById(doctor.getDepartmentId());
+                newDoctor.setDepartment(department);
+            }
+            Doctor doctor1 = doctorService.createDoctor(newDoctor);
             return ResponseEntity.ok(doctor1);
         }
         catch(Exception e){
@@ -59,9 +125,20 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateDoctor(@PathVariable Long id, @RequestBody Doctor doctor) {
+    public ResponseEntity updateDoctor(@PathVariable Long id, @RequestBody DoctorModel doctor) {
         try {
-            Doctor doctor1 = doctorService.updateDoctor(id, doctor);
+            Doctor existingDoctor = new Doctor();
+            existingDoctor.setFullName(doctor.getFullName());
+            existingDoctor.setDateOfBirth(doctor.getDateOfBirth());
+            existingDoctor.setGender(doctor.getGender());
+            existingDoctor.setPhone(doctor.getPhone());
+            existingDoctor.setAddress(doctor.getAddress());
+            existingDoctor.setDegree(doctor.getDegree());
+            if(doctor.getDepartmentId() != null) {
+                Department department = departmentService.findById(doctor.getDepartmentId());
+                existingDoctor.setDepartment(department);
+            }
+            Doctor doctor1 = doctorService.updateDoctor(id, existingDoctor);
             return ResponseEntity.ok(doctor1);
         }
         catch(Exception e){
