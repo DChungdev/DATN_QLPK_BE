@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -32,6 +33,11 @@ public class Appointment {
     private String reason; // Lý do khám
 
     private String status; // 'pending', 'confirmed', 'canceled'...
+
+    private double baseFee;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private List<AppointmentServices> services;
 
     @Column(name = "created_at")
     private Date createdAt = new Date();
