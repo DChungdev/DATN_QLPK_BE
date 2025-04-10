@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.webapi.models.dto.AddServicesRequest;
 import com.example.webapi.models.dto.AppointmentRequest;
+import com.example.webapi.models.dto.CancelAppointmentRequest;
 import com.example.webapi.models.entities.Appointment;
 import com.example.webapi.services.AppointmentService;
 
@@ -29,11 +31,15 @@ public class AppointmentController {
                     .reason(appointment.getReason())
                     .status(appointment.getStatus())
                     .baseFee(appointment.getBaseFee())
+                    .totalFee(appointment.getTotalFee())
+                    .serviceIds(appointment.getServices().stream()
+                        .map(as -> as.getService().getId())
+                        .collect(Collectors.toList()))
                     .build())
                 .collect(Collectors.toList());
             return ResponseEntity.ok(appointmentRequests);
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -50,6 +56,10 @@ public class AppointmentController {
                 .reason(appointment.getReason())
                 .status(appointment.getStatus())
                 .baseFee(appointment.getBaseFee())
+                .totalFee(appointment.getTotalFee())
+                .serviceIds(appointment.getServices().stream()
+                        .map(as -> as.getService().getId())
+                        .collect(Collectors.toList()))
                 .build();
             return ResponseEntity.ok(request);
         } catch (Exception e) {
@@ -88,6 +98,9 @@ public class AppointmentController {
                 .reason(appointment.getReason())
                 .status(appointment.getStatus())
                 .baseFee(appointment.getBaseFee())
+                .serviceIds(appointment.getServices().stream()
+                        .map(as -> as.getService().getId())
+                        .collect(Collectors.toList()))
                 .build();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -104,4 +117,24 @@ public class AppointmentController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity cancelAppointment(@PathVariable Long id, @RequestBody CancelAppointmentRequest request) {
+        try {
+            appointmentService.cancelAppointment(id, request);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // @PostMapping("/{id}/add-services")
+    // public ResponseEntity addServicesToAppointment(@PathVariable Long id, @RequestBody AddServicesRequest request) {
+    //     try {
+    //         appointmentService.addServicesToAppointment(id, request);
+    //         return ResponseEntity.ok().build();
+    //     } catch (Exception e) {
+    //         return ResponseEntity.badRequest().body(e.getMessage());
+    //     }
+    // }
 }

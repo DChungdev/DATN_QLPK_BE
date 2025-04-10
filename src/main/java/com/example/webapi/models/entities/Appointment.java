@@ -36,7 +36,13 @@ public class Appointment {
 
     private double baseFee;
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private double totalFee;
+
+    private String cancelReason;
+
+    private String cancelBy;
+
+    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentServices> services;
 
     @Column(name = "created_at")

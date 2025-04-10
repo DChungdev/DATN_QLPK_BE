@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
+import com.example.webapi.models.entities.AppointmentServices;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,4 +25,8 @@ public class AppointmentRequest {
     private String status; // 'pending', 'confirmed', 'canceled'...
 
     private double baseFee;
+
+    private double totalFee;
+
+    private List<Long> serviceIds;
 } 

@@ -3,6 +3,7 @@ package com.example.webapi.models.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "services")
@@ -10,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Service {
+public class ServiceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,8 +19,5 @@ public class Service {
     private String name;
 
     private double price;
-
-    @OneToMany(mappedBy = "service")
-    private List<AppointmentServices> appointmentServices;
 }
 
