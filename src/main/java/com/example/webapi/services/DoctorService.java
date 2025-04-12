@@ -46,6 +46,16 @@ public class DoctorService {
         existingDoctor.setDateOfBirth(doctor.getDateOfBirth());
         existingDoctor.setDegree(doctor.getDegree());
         existingDoctor.setDepartment(doctor.getDepartment());
+        if(doctor.getImage() != null && !doctor.getImage().isEmpty()){
+            // Delete old image if exists
+            if (existingDoctor.getImage() != null && !existingDoctor.getImage().isEmpty()) {
+                java.io.File oldImage = new java.io.File("./uploads/" + existingDoctor.getImage());
+                if (oldImage.exists()) {
+                    oldImage.delete();
+                }
+            }
+            existingDoctor.setImage(doctor.getImage());
+        }
 
         return doctorRepository.save(existingDoctor);
     }

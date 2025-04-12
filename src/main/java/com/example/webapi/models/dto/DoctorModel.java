@@ -20,4 +20,5 @@ public class DoctorModel {
     private String address;
     private String degree;
     private Long departmentId;
+    private String image;
 }

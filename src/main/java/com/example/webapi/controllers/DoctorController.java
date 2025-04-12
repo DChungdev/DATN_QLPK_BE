@@ -33,6 +33,7 @@ public class DoctorController {
                 .address(doctor.getAddress())
                 .degree(doctor.getDegree())
                 .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+                .image(doctor.getImage())
                 .build()).toList();
     }
 
@@ -49,6 +50,7 @@ public class DoctorController {
                     .address(doctor.getAddress())
                     .degree(doctor.getDegree())
                     .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+                    .image(doctor.getImage())
                     .build();
             return ResponseEntity.ok(doctorModel);
         }
@@ -71,6 +73,7 @@ public class DoctorController {
                     .address(doctor.getAddress())
                     .degree(doctor.getDegree())
                     .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+                    .image(doctor.getImage())
                     .build();
                 return ResponseEntity.ok(doctorModel);
             }
@@ -93,6 +96,7 @@ public class DoctorController {
             .address(doctor.getAddress())
             .degree(doctor.getDegree())
             .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
+            .image(doctor.getImage())
             .build()).toList();
 
             return ResponseEntity.ok(doctors);
@@ -112,6 +116,9 @@ public class DoctorController {
             newDoctor.setPhone(doctor.getPhone());
             newDoctor.setAddress(doctor.getAddress());
             newDoctor.setDegree(doctor.getDegree());
+            if(doctor.getImage() != null && !doctor.getImage().isEmpty()){
+                newDoctor.setImage(doctor.getImage());
+            }
             if(doctor.getDepartmentId() != null) {
                 Department department = departmentService.findById(doctor.getDepartmentId());
                 newDoctor.setDepartment(department);
@@ -134,6 +141,9 @@ public class DoctorController {
             existingDoctor.setPhone(doctor.getPhone());
             existingDoctor.setAddress(doctor.getAddress());
             existingDoctor.setDegree(doctor.getDegree());
+            if(doctor.getImage() != null && !doctor.getImage().isEmpty()){
+                existingDoctor.setImage(doctor.getImage());
+            }
             if(doctor.getDepartmentId() != null) {
                 Department department = departmentService.findById(doctor.getDepartmentId());
                 existingDoctor.setDepartment(department);

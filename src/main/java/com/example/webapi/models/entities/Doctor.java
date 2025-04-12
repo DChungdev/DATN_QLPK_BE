@@ -32,6 +32,7 @@ public class Doctor {
     private String phone;
     private String address;
     private String degree;
+    private String image;
     // Liên kết đến khoa
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = true)

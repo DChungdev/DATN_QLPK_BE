@@ -24,6 +24,7 @@ public class Patient {
     private String gender;
     private String phone;
     private String address;
+    private String image;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "account_id")

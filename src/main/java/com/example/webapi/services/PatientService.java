@@ -36,6 +36,16 @@ public class PatientService {
         existingPatient.setGender(patientUpdate.getGender());
         existingPatient.setPhone(patientUpdate.getPhone());
         existingPatient.setAddress(patientUpdate.getAddress());
+        if(patientUpdate.getImage() != null && !patientUpdate.getImage().isEmpty()){
+            // Delete old image if exists
+            if (existingPatient.getImage() != null && !existingPatient.getImage().isEmpty()) {
+                java.io.File oldImage = new java.io.File("./uploads/" + existingPatient.getImage());
+                if (oldImage.exists()) {
+                    oldImage.delete();
+                }
+            }
+            existingPatient.setImage(patientUpdate.getImage());
+        }
 
         return patientRepository.save(existingPatient);
     }
