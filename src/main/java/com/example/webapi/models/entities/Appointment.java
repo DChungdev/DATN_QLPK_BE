@@ -27,6 +27,7 @@ public class Appointment {
     private Doctor doctor;
 
     // Ngày giờ hẹn
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "appointment_date", nullable = false)
     private Date appointmentDate;
 
