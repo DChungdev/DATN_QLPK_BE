@@ -19,5 +19,7 @@ public class ServiceEntity {
     private String name;
 
     private double price;
+    
+    private String description;
 }
 

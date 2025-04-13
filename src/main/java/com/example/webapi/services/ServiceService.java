@@ -30,6 +30,7 @@ public class ServiceService {
         ServiceEntity existingService = getServiceById(id);
         existingService.setName(service.getName());
         existingService.setPrice(service.getPrice());
+        existingService.setDescription(service.getDescription());
         return serviceRepository.save(existingService);
     }
     

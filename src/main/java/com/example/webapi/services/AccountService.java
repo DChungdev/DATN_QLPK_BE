@@ -1,5 +1,6 @@
 package com.example.webapi.services;
 
+import com.example.webapi.models.dto.RegisterRequest;
 import com.example.webapi.models.entities.Account;
 import com.example.webapi.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +28,21 @@ public class AccountService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public Account register(String username, String password, String fullName, String email, String phone, String role) {
-        if (accountRepository.findByUsername(username).isPresent()) {
+    public Account register(RegisterRequest request) {
+        if (accountRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
-        if (accountRepository.findByEmail(email).isPresent()) {
+        if (accountRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
 
         Account account = new Account();
-        account.setUsername(username);
-        account.setPasswordHash(passwordEncoder.encode(password));
-        account.setFullName(fullName);
-        account.setEmail(email);
-        account.setPhone(phone);
-        account.setRole(role != null ? role.toLowerCase() : "user"); // Default role is USER if not specified
+        account.setUsername(request.getUsername());
+        account.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        account.setFullName(request.getFullName());
+        account.setEmail(request.getEmail());
+        account.setPhone(request.getPhone());
+        account.setRole(request.getRole() != null ? request.getRole().toLowerCase() : "user"); // Default role is USER if not specified
 
         return accountRepository.save(account);
     }
@@ -65,5 +66,10 @@ public class AccountService {
         Account account = accountRepository.findByUsername(username).orElseThrow(() ->
                 new UsernameNotFoundException("User not found"));
         accountRepository.delete(account);
+    }
+
+    public Long getAccountId(String username) {
+        Account account = findByUsername(username);
+        return account.getAccountId();
     }
 } 

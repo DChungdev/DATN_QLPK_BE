@@ -47,50 +47,37 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            Account account = accountService.register(
-                request.getUsername(),
-                request.getPassword(),
-                request.getFullName(),
-                request.getEmail(),
-                request.getPhone(),
-                request.getRole()
-            );
+            Account account = accountService.register(request);
+            
             if(request.getRole() != null && request.getRole().equalsIgnoreCase("doctor")) {
                 Doctor doctor = new Doctor();
                 doctor.setAccount(account);
-                doctor.setFullName(request.getFullName());
-                doctor.setPhone(request.getPhone());
+                if(request.getFullName() != null){
+                    doctor.setFullName(request.getFullName());
+                }
+                else{
+                    doctor.setFullName(request.getUsername());
+                }
+                if(request.getPhone() != null){
+                    doctor.setPhone(request.getPhone());
+                }
                 doctorService.createDoctor(doctor);
             }
             else{
                 Patient patient = new Patient();
                 patient.setAccount(account);
-                patient.setFullName(request.getFullName());
-                patient.setPhone(request.getPhone());
-                Patient created = patientService.createPatient(patient);
+                if(request.getFullName() != null){
+                    patient.setFullName(request.getFullName());
+                }
+                else{
+                    patient.setFullName(request.getUsername());
+                }
+                if(request.getPhone() != null){
+                    patient.setPhone(request.getPhone());
+                }
+                patientService.createPatient(patient);
             }
             return ResponseEntity.ok("Account registered successfully");
-
-
-//            // Auto login after registration
-//            Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-//            );
-//
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            String accessToken = jwtUtil.generateAccessToken(userDetails);
-//            String refreshToken = jwtUtil.generateRefreshToken(userDetails);
-//
-//            // Save refresh token
-//            refreshTokenService.createRefreshToken(request.getUsername(), refreshToken);
-//
-//            return ResponseEntity.ok(new AuthResponse(
-//                accessToken,
-//                refreshToken,
-//                account.getRole(),
-//                account.getUsername(),
-//                account.getFullName()
-//            ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -205,6 +192,17 @@ public class AuthController {
         try{
             List<Account> accounts = accountService.getAllAccounts();
             return ResponseEntity.ok(accounts);
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getAccountByUsername(@PathVariable String username) {
+        try{
+            Long accountId = accountService.getAccountId(username);  
+            return ResponseEntity.ok(accountId);
         }
         catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
