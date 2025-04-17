@@ -46,6 +46,9 @@ public class Appointment {
     @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppointmentServices> services;
 
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MedicalResult medicalResult;
+
     @Column(name = "created_at")
     private Date createdAt = new Date();
 

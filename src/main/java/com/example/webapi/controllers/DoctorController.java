@@ -21,7 +21,7 @@ public class DoctorController {
     @Autowired
     DepartmentService departmentService;
 
-    @PreAuthorize("hasRole('ROLE_admin')")
+    // @PreAuthorize("hasRole('ROLE_admin')")
     @GetMapping
     public List<DoctorModel> getDoctors() {
         return doctorService.findAll().stream().<DoctorModel>map(doctor -> DoctorModel.builder()

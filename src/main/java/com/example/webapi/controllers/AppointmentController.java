@@ -1,5 +1,6 @@
 package com.example.webapi.controllers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,4 +138,41 @@ public class AppointmentController {
     //         return ResponseEntity.badRequest().body(e.getMessage());
     //     }
     // }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<?> getDoctorAppointments(@PathVariable Long doctorId) {
+        try {
+            List<Appointment> appointments = appointmentService.getAppointmentsByDoctorId(doctorId);
+            List<AppointmentRequest> appointmentRequests = appointments.stream()
+                .<AppointmentRequest>map(appointment -> AppointmentRequest.builder()
+                    .appointmentId(appointment.getAppointmentId())
+                    .patientId(appointment.getPatient().getPatientId())
+                    .doctorId(appointment.getDoctor().getDoctorId())
+                    .appointmentDate(appointment.getAppointmentDate())
+                    .reason(appointment.getReason())
+                    .status(appointment.getStatus())
+                    .baseFee(appointment.getBaseFee())
+                    .serviceIds(appointment.getServices().stream()
+                        .map(as -> as.getService().getId())
+                        .collect(Collectors.toList()))
+                    .build())
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(appointmentRequests);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/doctor/{doctorId}/dates")
+    public ResponseEntity<?> getDoctorAppointmentDates(@PathVariable Long doctorId) {
+        try {
+            List<Appointment> appointments = appointmentService.getAppointmentsByDoctorId(doctorId);
+            List<Date> appointmentDates = appointments.stream()
+                .map(Appointment::getAppointmentDate)
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(appointmentDates);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
