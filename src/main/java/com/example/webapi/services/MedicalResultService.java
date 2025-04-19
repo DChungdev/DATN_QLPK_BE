@@ -9,11 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.example.webapi.models.entities.MedicalResult;
 import com.example.webapi.repositories.MedicalResultRepository;
+import com.example.webapi.services.AppointmentService;
+import com.example.webapi.models.dto.AppointmentRequest;
+import com.example.webapi.models.entities.Appointment;
 
 @Service
 public class MedicalResultService {
     @Autowired
     private MedicalResultRepository medicalResultRepository;
+    
+    @Autowired
+    private AppointmentService appointmentService;
     
     public MedicalResult createMedicalResult(MedicalResult medicalResult) {
         Optional<MedicalResult> medicalResult1 = medicalResultRepository.findByAppointmentId(medicalResult.getAppointment().getAppointmentId());
@@ -21,7 +27,17 @@ public class MedicalResultService {
             throw new RuntimeException("Medical result already exists for appointment ID: " + medicalResult.getAppointment().getAppointmentId());
         }
         medicalResult.setCreatedAt(new Date());
-        return medicalResultRepository.save(medicalResult);
+        
+        // Save the medical result
+        MedicalResult savedResult = medicalResultRepository.save(medicalResult);
+        
+        // Update appointment status to completed
+        Long appointmentId = medicalResult.getAppointment().getAppointmentId();
+        com.example.webapi.models.dto.AppointmentRequest appointmentRequest = new com.example.webapi.models.dto.AppointmentRequest();
+        appointmentRequest.setStatus("completed");
+        appointmentService.updateAppointment(appointmentId, appointmentRequest);
+        
+        return savedResult;
     }
 
     public List<MedicalResult> getAllMedicalResults() {
@@ -65,6 +81,18 @@ public class MedicalResultService {
     
     public void deleteMedicalResult(Long id) {
         MedicalResult medicalResult = getMedicalResultById(id);
-        medicalResultRepository.delete(medicalResult);
+        
+        // Xóa liên kết với Appointment để tránh vấn đề với orphanRemoval
+        Appointment appointment = medicalResult.getAppointment();
+        if (appointment != null) {
+            appointment.setMedicalResult(null);
+            appointment.setStatus("confirmed");
+            AppointmentRequest appointmentRequest = new AppointmentRequest();
+            appointmentRequest.setStatus("confirmed");
+            appointmentService.updateAppointment(appointment.getAppointmentId(), appointmentRequest);
+        }
+        
+        // Xóa MedicalResult
+        // medicalResultRepository.delete(medicalResult);
     }
 }
