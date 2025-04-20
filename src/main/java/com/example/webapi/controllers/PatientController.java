@@ -75,4 +75,14 @@ public class PatientController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/getbydoctorid/{doctorId}")
+    public ResponseEntity<?> getPatientsByDoctor(@PathVariable Long doctorId) {
+        try {
+            List<Patient> patients = patientService.getPatientsByDoctorId(doctorId);
+            return ResponseEntity.ok(patients);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

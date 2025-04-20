@@ -152,6 +152,7 @@ public class AppointmentController {
                     .reason(appointment.getReason())
                     .status(appointment.getStatus())
                     .baseFee(appointment.getBaseFee())
+                    .totalFee(appointment.getTotalFee())
                     .serviceIds(appointment.getServices().stream()
                         .map(as -> as.getService().getId())
                         .collect(Collectors.toList()))
@@ -171,6 +172,31 @@ public class AppointmentController {
                 .map(Appointment::getAppointmentDate)
                 .collect(Collectors.toList());
             return ResponseEntity.ok(appointmentDates);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<?> getPatientAppointments(@PathVariable Long patientId) {
+        try {
+            List<Appointment> appointments = appointmentService.getAppointmentsByPatientId(patientId);
+            List<AppointmentRequest> appointmentRequests = appointments.stream()
+                .<AppointmentRequest>map(appointment -> AppointmentRequest.builder()
+                    .appointmentId(appointment.getAppointmentId())
+                    .patientId(appointment.getPatient().getPatientId())
+                    .doctorId(appointment.getDoctor().getDoctorId())
+                    .appointmentDate(appointment.getAppointmentDate())
+                    .reason(appointment.getReason())
+                    .status(appointment.getStatus())
+                    .baseFee(appointment.getBaseFee())
+                    .totalFee(appointment.getTotalFee())
+                    .serviceIds(appointment.getServices().stream()
+                        .map(as -> as.getService().getId())
+                        .collect(Collectors.toList()))
+                    .build())
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(appointmentRequests);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

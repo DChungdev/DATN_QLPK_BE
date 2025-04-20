@@ -95,4 +95,8 @@ public class MedicalResultService {
         // Xóa MedicalResult
         // medicalResultRepository.delete(medicalResult);
     }
+    
+    public List<MedicalResult> getByDoctorId(Long doctorId) {
+        return medicalResultRepository.findByDoctorId(doctorId);
+    }
 }

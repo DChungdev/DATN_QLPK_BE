@@ -60,6 +60,7 @@ public class MedicalResultController {
                     .diagnosis(medicalResultService.getByAppointmentId(appointmentId).getDiagnosis())
                     .notes(medicalResultService.getByAppointmentId(appointmentId).getNotes())
                     .treatmentPlan(medicalResultService.getByAppointmentId(appointmentId).getTreatmentPlan())
+                    .createdAt(medicalResultService.getByAppointmentId(appointmentId).getCreatedAt())
                     .build();
             return ResponseEntity.ok(medicalResultModel);
         } catch (Exception e) {
@@ -77,6 +78,25 @@ public class MedicalResultController {
                     .diagnosis(result.getDiagnosis())
                     .notes(result.getNotes())
                     .treatmentPlan(result.getTreatmentPlan())
+                    .createdAt(result.getCreatedAt())
+                    .build()).toList();
+            return ResponseEntity.ok(medicalResultModels);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity getMedicalResultByDoctorId(@PathVariable Long doctorId) {
+        try{
+            List<MedicalResultModel> medicalResultModels = medicalResultService.getByDoctorId(doctorId).stream().<MedicalResultModel>map(result -> MedicalResultModel.builder()
+                    .id(result.getId())
+                    .appointment(result.getAppointment().getAppointmentId())
+                    .symptoms(result.getSymptoms())
+                    .diagnosis(result.getDiagnosis())
+                    .notes(result.getNotes())
+                    .treatmentPlan(result.getTreatmentPlan())
+                    .createdAt(result.getCreatedAt())
                     .build()).toList();
             return ResponseEntity.ok(medicalResultModels);
         } catch (Exception e) {
