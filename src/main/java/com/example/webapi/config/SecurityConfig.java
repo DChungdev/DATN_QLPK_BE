@@ -41,7 +41,7 @@ public class SecurityConfig {
        http.csrf(csrf->csrf.disable())
                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                .authorizeHttpRequests(auth ->auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/uploads/**").permitAll()
+                        .requestMatchers("/ws/**", "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/uploads/**","/api/ws-test/**","/api/ws-debug/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -70,10 +70,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500","http://127.0.0.1:5501")); // 👈 Domain frontend của bạn
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://127.0.0.1:5500",
+            "http://127.0.0.1:5501",
+            "http://localhost:3000",
+            "http://localhost:4200",
+            "http://localhost:5173",
+            "http://localhost:8080",
+            "http://localhost:19000"
+        )); // Bổ sung domain frontend của bạn
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // 👈 Nếu bạn dùng cookie hoặc Authorization header
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // áp dụng cho toàn bộ endpoint

@@ -34,6 +34,7 @@ public class DoctorController {
                 .degree(doctor.getDegree())
                 .departmentId(doctor.getDepartment() != null ? doctor.getDepartment().getDepartmentId() : null)
                 .image(doctor.getImage())
+                .accountId(doctor.getAccount() != null ? doctor.getAccount().getAccountId() : null)
                 .build()).toList();
     }
 

@@ -1,6 +1,7 @@
 package com.example.webapi.controllers;
 
 import com.example.webapi.models.entities.Patient;
+import com.example.webapi.models.dto.PatientModel;
 import com.example.webapi.services.AccountService;
 import com.example.webapi.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/patients")
@@ -80,7 +82,19 @@ public class PatientController {
     public ResponseEntity<?> getPatientsByDoctor(@PathVariable Long doctorId) {
         try {
             List<Patient> patients = patientService.getPatientsByDoctorId(doctorId);
-            return ResponseEntity.ok(patients);
+            List<PatientModel> patientModels = patients.stream()
+                .map(patient -> PatientModel.builder()
+                    .patientId(patient.getPatientId())
+                    .fullName(patient.getFullName()) 
+                    .dateOfBirth(patient.getDateOfBirth())
+                    .gender(patient.getGender())
+                    .phone(patient.getPhone())
+                    .address(patient.getAddress())
+                    .image(patient.getImage())
+                    .accountId(patient.getAccount() != null ? patient.getAccount().getAccountId() : null)
+                    .build())
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(patientModels);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

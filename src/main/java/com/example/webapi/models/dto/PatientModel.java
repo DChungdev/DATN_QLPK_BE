@@ -8,18 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorModel {
-    private Long doctorId;
+@Builder
+public class PatientModel {
+    private Long patientId;
     private String fullName;
     private Date dateOfBirth;
     private String gender;
     private String phone;
     private String address;
-    private String degree;
-    private Long departmentId;
     private String image;
     private Long accountId;
 }
