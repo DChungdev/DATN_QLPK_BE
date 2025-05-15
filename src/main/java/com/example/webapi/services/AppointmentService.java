@@ -56,22 +56,24 @@ public class AppointmentService {
             throw new RuntimeException("Appointments can only be booked up to " + MAX_DAYS_AHEAD + " days in advance");
         }
 
-        // Check for existing appointment with same doctor at same time
-        boolean hasDoctorAppointment = appointmentRepository.existsByStaffIdAndAppointmentTime(
+        // Check for existing non-canceled appointment with same doctor at same time
+        boolean hasDoctorAppointment = appointmentRepository.existsByStaffIdAndAppointmentTimeAndStatusNot(
             request.getDoctorId(), 
-            appointmentDate
+            appointmentDate,
+            "canceled"
         );
         if (hasDoctorAppointment) {
             throw new RuntimeException("Doctor already has an appointment at this time");
         }
 
-        // Check for existing appointment with same patient at nearby time
+        // Check for existing non-canceled appointment with same patient at nearby time
         Date startTime = new Date(appointmentDate.getTime() - (MINUTES_THRESHOLD * 60 * 1000));
         Date endTime = new Date(appointmentDate.getTime() + (MINUTES_THRESHOLD * 60 * 1000));
-        boolean hasPatientAppointment = appointmentRepository.existsByCustomerIdAndAppointmentTimeBetween(
+        boolean hasPatientAppointment = appointmentRepository.existsByCustomerIdAndAppointmentTimeBetweenAndStatusNot(
             request.getPatientId(),
             startTime,
-            endTime
+            endTime,
+            "canceled"
         );
         if (hasPatientAppointment) {
             throw new RuntimeException("Patient already has an appointment within " + MINUTES_THRESHOLD + " minutes of this time");
@@ -84,7 +86,8 @@ public class AppointmentService {
         appointment.setAppointmentDate(appointmentDate);
         appointment.setReason(request.getReason());
         appointment.setStatus("pending");
-        appointment.setBaseFee(request.getBaseFee());
+        // appointment.setBaseFee(request.getBaseFee());
+        appointment.setBaseFee(100000);
         appointment.setTotalFee(request.getBaseFee());
         appointment.setCreatedAt(new Date());
         appointment.setUpdatedAt(new Date());

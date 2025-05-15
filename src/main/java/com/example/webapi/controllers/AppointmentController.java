@@ -169,6 +169,7 @@ public class AppointmentController {
         try {
             List<Appointment> appointments = appointmentService.getAppointmentsByDoctorId(doctorId);
             List<Date> appointmentDates = appointments.stream()
+                .filter(appointment -> !"canceled".equalsIgnoreCase(appointment.getStatus()))
                 .map(Appointment::getAppointmentDate)
                 .collect(Collectors.toList());
             return ResponseEntity.ok(appointmentDates);
@@ -194,6 +195,8 @@ public class AppointmentController {
                     .serviceIds(appointment.getServices().stream()
                         .map(as -> as.getService().getId())
                         .collect(Collectors.toList()))
+                    .cancelReason(appointment.getCancelReason())
+                    .cancelBy(appointment.getCancelBy())
                     .build())
                 .collect(Collectors.toList());
             return ResponseEntity.ok(appointmentRequests);

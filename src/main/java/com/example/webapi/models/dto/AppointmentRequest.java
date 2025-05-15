@@ -28,5 +28,9 @@ public class AppointmentRequest {
 
     private double totalFee;
 
+    private String cancelReason;
+
+    private String cancelBy;
+
     private List<Long> serviceIds;
 } 

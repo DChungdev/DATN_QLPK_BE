@@ -30,4 +30,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId ORDER BY a.appointmentDate")
     List<Appointment> findByPatientId(@Param("patientId") Long patientId);
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Appointment a WHERE a.doctor.id = :staffId AND a.appointmentDate = :appointmentTime AND a.status != :status")
+    boolean existsByStaffIdAndAppointmentTimeAndStatusNot(@Param("staffId") Long staffId, @Param("appointmentTime") Date appointmentTime, @Param("status") String status);
+
+    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Appointment a WHERE a.patient.id = :customerId AND a.appointmentDate BETWEEN :startTime AND :endTime AND a.status != :status")
+    boolean existsByCustomerIdAndAppointmentTimeBetweenAndStatusNot(@Param("customerId") Long customerId, @Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("status") String status);
 }
