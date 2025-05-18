@@ -26,6 +26,9 @@ public class PatientService {
     }
 
     public Patient createPatient(Patient patient) {
+        if(patient.getFullName() == null || patient.getFullName().isEmpty()){
+            throw new RuntimeException("Full name is required");
+        }
         return patientRepository.save(patient);
     }
 

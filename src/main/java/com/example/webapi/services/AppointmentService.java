@@ -103,9 +103,9 @@ public class AppointmentService {
             Date appointmentDate = request.getAppointmentDate();
             Date now = new Date();
             
-            if (appointmentDate.before(now)) {
-                throw new RuntimeException("Cannot update appointment to a past time");
-            }
+            // if (appointmentDate.before(now)) {
+            //     throw new RuntimeException("Cannot update appointment to a past time");
+            // }
             
             long daysBetween = ChronoUnit.DAYS.between(now.toInstant(), appointmentDate.toInstant());
             if (daysBetween > MAX_DAYS_AHEAD) {
