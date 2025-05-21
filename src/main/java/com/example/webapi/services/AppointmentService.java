@@ -88,7 +88,7 @@ public class AppointmentService {
         appointment.setStatus("pending");
         // appointment.setBaseFee(request.getBaseFee());
         appointment.setBaseFee(100000);
-        appointment.setTotalFee(request.getBaseFee());
+        appointment.setTotalFee(100000);
         appointment.setCreatedAt(new Date());
         appointment.setUpdatedAt(new Date());
         
